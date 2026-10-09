@@ -164,7 +164,30 @@ def health():
         "service": "enterprise-iam-api",
     }
 
+@app.get("/api/public-demo")
+def public_demo(session: Session = Depends(get_session)):
+    users_count = session.exec(
+        select(func.count()).select_from(User)
+    ).one()
 
+    active_count = session.exec(
+        select(func.count())
+        .select_from(User)
+        .where(User.is_active == True)
+    ).one()
+
+    audit_count = session.exec(
+        select(func.count()).select_from(AuditEvent)
+    ).one()
+
+    return {
+        "total_users": users_count,
+        "active_users": active_count,
+        "audit_events": audit_count,
+        "mode": "viewer",
+        "read_only": True,
+    }
+    
 @app.post("/api/auth/login")
 def login(
     body: LoginRequest,
