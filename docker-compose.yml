@@ -1,0 +1,18 @@
+services:
+  api:
+    build: ./backend
+    environment:
+      IAM_SECRET_KEY: ${IAM_SECRET_KEY:-change-this-local-secret-before-deployment}
+      IAM_DATABASE_URL: sqlite:////data/iam.db
+    volumes:
+      - iam_data:/data
+    ports:
+      - "8000:8000"
+  frontend:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+volumes:
+  iam_data:
