@@ -48,8 +48,8 @@ function App() {
   const [users, setUsers] = useState([]);
   const [audit, setAudit] = useState([]);
 
-  const [email, setEmail] = useState('admin@acme.local');
-  const [password, setPassword] = useState('ChangeMe_Admin123!');
+ const [email, setEmail] = useState('');
+ const [password, setPassword] = useState('');
 
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -81,17 +81,35 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    if (token) {
-      load(token).catch((e) => {
-        setError(e.message);
-        setToken('');
-        setUser(null);
-        localStorage.removeItem('iam_token');
-      });
-    }
-  }, []);
+  
+  async function loadPublicDemo() {
+    const s = await request('/api/public-demo', '');
 
+    setStats(s);
+    setUser({
+      email: 'Public Viewer',
+      role: 'viewer',
+    });
+    setUsers([]);
+    setAudit([]);
+  }
+  
+ 
+useEffect(() => {
+  if (token) {
+    load(token).catch((e) => {
+      setError(e.message);
+      setToken('');
+      setUser(null);
+      localStorage.removeItem('iam_token');
+    });
+  } else {
+    loadPublicDemo().catch((e) => {
+      setError('Public demo is temporarily unavailable.');
+    });
+  }
+}, []);
+  
   async function login(e) {
     e.preventDefault();
     setBusy(true);
