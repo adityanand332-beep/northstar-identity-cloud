@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import './style.css';
 
-const API = 'http://127.0.0.1:8000';
+const API = 'https://northstar-identity-cloud-api.onrender.com';
 
 async function request(path, token, options = {}) {
   const res = await fetch(API + path, {
